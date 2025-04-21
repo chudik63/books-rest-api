@@ -1,0 +1,146 @@
+basePath: /
+definitions:
+  go-books-api_internal_dto.AddBookResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+    type: object
+  go-books-api_internal_dto.Book:
+    properties:
+      author:
+        maxLength: 100
+        minLength: 1
+        type: string
+      genre:
+        maxLength: 100
+        minLength: 1
+        type: string
+      title:
+        maxLength: 100
+        minLength: 1
+        type: string
+    required:
+    - author
+    - genre
+    - title
+    type: object
+  go-books-api_internal_dto.ListBooksResponse:
+    properties:
+      books:
+        items:
+          $ref: '#/definitions/go-books-api_internal_dto.Book'
+        type: array
+    type: object
+  internal_delivery_http_handler.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  title: Go Books API
+  version: "1.0"
+paths:
+  /books:
+    get:
+      description: Lists the books
+      parameters:
+      - description: page number
+        in: query
+        name: page
+        type: string
+      - description: limit
+        in: query
+        name: limit
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-books-api_internal_dto.ListBooksResponse'
+        "500":
+          description: Uknown error occured while listing the book
+          schema:
+            $ref: '#/definitions/internal_delivery_http_handler.ErrorResponse'
+      summary: Lists the books
+      tags:
+      - books
+    post:
+      description: Adds a new book
+      parameters:
+      - description: Book
+        in: body
+        name: book
+        required: true
+        schema:
+          $ref: '#/definitions/go-books-api_internal_dto.Book'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/go-books-api_internal_dto.AddBookResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/internal_delivery_http_handler.ErrorResponse'
+        "500":
+          description: Uknown error occured while adding the book
+          schema:
+            $ref: '#/definitions/internal_delivery_http_handler.ErrorResponse'
+      summary: Adds a new book
+      tags:
+      - books
+  /books/{id}:
+    delete:
+      description: Deletes the book
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Uknown error occured while deleting the book
+          schema:
+            $ref: '#/definitions/internal_delivery_http_handler.ErrorResponse'
+      summary: Deletes the book
+      tags:
+      - books
+    get:
+      description: Returns the book
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/go-books-api_internal_dto.Book'
+        "500":
+          description: Uknown error occured while getting the book
+          schema:
+            $ref: '#/definitions/internal_delivery_http_handler.ErrorResponse'
+      summary: Returns the book
+      tags:
+      - books
+schemes:
+- http
+- https
+swagger: "2.0"
