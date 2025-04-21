@@ -13,6 +13,7 @@ type Repository interface {
 	GetBookByID(ctx context.Context, id uint64) (*models.Book, error)
 	DeleteBook(ctx context.Context, id uint64) error
 	ListBooks(ctx context.Context, limit, offset uint64) ([]*models.Book, error)
+	UpdateBook(ctx context.Context, book *models.Book) error
 }
 
 type Service struct {
@@ -112,4 +113,24 @@ func (s *Service) ListBooks(ctx context.Context, pageStr string, limitStr string
 	return &dto.ListBooksResponse{
 		Books: booksDTO,
 	}, nil
+}
+
+func (s *Service) UpdateBook(ctx context.Context, bookIDStr string, book *dto.Book) error {
+	bookID, err := strconv.ParseUint(bookIDStr, 10, 64)
+	if err != nil {
+		return models.ErrFailedToParseID
+	}
+
+	err = s.repo.UpdateBook(ctx, &models.Book{
+		ID:        bookID,
+		Title:     book.Title,
+		Author:    book.Author,
+		Genre:     book.Genre,
+		UpdatedAt: time.Now(),
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

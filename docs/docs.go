@@ -46,6 +46,18 @@ const docTemplate = `{
                             "$ref": "#/definitions/go-books-api_internal_dto.ListBooksResponse"
                         }
                     },
+                    "400": {
+                        "description": "page number is invalid / limit number is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/internal_delivery_http_handler.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "noting was found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_delivery_http_handler.ErrorResponse"
+                        }
+                    },
                     "500": {
                         "description": "Uknown error occured while listing the book",
                         "schema": {
@@ -122,8 +134,71 @@ const docTemplate = `{
                             "$ref": "#/definitions/go-books-api_internal_dto.Book"
                         }
                     },
+                    "400": {
+                        "description": "book id is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/internal_delivery_http_handler.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "noting was found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_delivery_http_handler.ErrorResponse"
+                        }
+                    },
                     "500": {
                         "description": "Uknown error occured while getting the book",
+                        "schema": {
+                            "$ref": "#/definitions/internal_delivery_http_handler.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Updates the book",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "books"
+                ],
+                "summary": "Updates the book",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Book ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Book",
+                        "name": "book",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/go-books-api_internal_dto.Book"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "book id is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/internal_delivery_http_handler.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "noting was found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_delivery_http_handler.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Uknown error occured while deleting the book",
                         "schema": {
                             "$ref": "#/definitions/internal_delivery_http_handler.ErrorResponse"
                         }
@@ -151,6 +226,18 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK"
+                    },
+                    "400": {
+                        "description": "book id is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/internal_delivery_http_handler.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "noting was found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_delivery_http_handler.ErrorResponse"
+                        }
                     },
                     "500": {
                         "description": "Uknown error occured while deleting the book",

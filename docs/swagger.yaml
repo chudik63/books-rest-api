@@ -63,6 +63,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/go-books-api_internal_dto.ListBooksResponse'
+        "400":
+          description: page number is invalid / limit number is invalid
+          schema:
+            $ref: '#/definitions/internal_delivery_http_handler.ErrorResponse'
+        "404":
+          description: noting was found
+          schema:
+            $ref: '#/definitions/internal_delivery_http_handler.ErrorResponse'
         "500":
           description: Uknown error occured while listing the book
           schema:
@@ -111,6 +119,14 @@ paths:
       responses:
         "200":
           description: OK
+        "400":
+          description: book id is invalid
+          schema:
+            $ref: '#/definitions/internal_delivery_http_handler.ErrorResponse'
+        "404":
+          description: noting was found
+          schema:
+            $ref: '#/definitions/internal_delivery_http_handler.ErrorResponse'
         "500":
           description: Uknown error occured while deleting the book
           schema:
@@ -133,11 +149,53 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/go-books-api_internal_dto.Book'
+        "400":
+          description: book id is invalid
+          schema:
+            $ref: '#/definitions/internal_delivery_http_handler.ErrorResponse'
+        "404":
+          description: noting was found
+          schema:
+            $ref: '#/definitions/internal_delivery_http_handler.ErrorResponse'
         "500":
           description: Uknown error occured while getting the book
           schema:
             $ref: '#/definitions/internal_delivery_http_handler.ErrorResponse'
       summary: Returns the book
+      tags:
+      - books
+    put:
+      description: Updates the book
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Book
+        in: body
+        name: book
+        required: true
+        schema:
+          $ref: '#/definitions/go-books-api_internal_dto.Book'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: book id is invalid
+          schema:
+            $ref: '#/definitions/internal_delivery_http_handler.ErrorResponse'
+        "404":
+          description: noting was found
+          schema:
+            $ref: '#/definitions/internal_delivery_http_handler.ErrorResponse'
+        "500":
+          description: Uknown error occured while deleting the book
+          schema:
+            $ref: '#/definitions/internal_delivery_http_handler.ErrorResponse'
+      summary: Updates the book
       tags:
       - books
 schemes:

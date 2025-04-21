@@ -3,5 +3,6 @@ CREATE TABLE IF NOT EXISTS books (
     author VARCHAR(100) NOT NULL,
     title VARCHAR(100) NOT NULL,
     genre VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP NOT NULL
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP
 );

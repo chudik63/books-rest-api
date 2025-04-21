@@ -8,4 +8,5 @@ type Book struct {
 	Author    string
 	Genre     string
 	CreatedAt time.Time
+	UpdatedAt time.Time
 }

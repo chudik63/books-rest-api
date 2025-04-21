@@ -24,6 +24,7 @@ type BookService interface {
 	DeleteBook(ctx context.Context, bookID string) error
 	GetBook(ctx context.Context, bookID string) (*dto.Book, error)
 	ListBooks(ctx context.Context, page string, limit string) (*dto.ListBooksResponse, error)
+	UpdateBook(ctx context.Context, bookID string, book *dto.Book) error
 }
 
 type Handler struct {
@@ -77,6 +78,8 @@ func (h *Handler) AddBook(ctx *gin.Context) {
 // @Produce      json
 // @Param id path string true "Book ID"
 // @Success      200  {object}  dto.Book
+// @Failure      400  {object}  ErrorResponse  "book id is invalid"
+// @Failure      404  {object}  ErrorResponse  "noting was found"
 // @Failure      500  {object}  ErrorResponse  "Uknown error occured while getting the book"
 // @Router /books/{id} [get]
 func (h *Handler) GetBook(ctx *gin.Context) {
@@ -105,11 +108,50 @@ func (h *Handler) GetBook(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// UpdateBook
+// @Summary      Updates the book
+// @Description  Updates the book
+// @Tags         books
+// @Produce      json
+// @Param id path string true "Book ID"
+// @Param book body dto.Book true "Book"
+// @Success      200  {object}  nil
+// @Failure      400  {object}  ErrorResponse  "Invalid request body"
+// @Failure      400  {object}  ErrorResponse  "book id is invalid"
+// @Failure      404  {object}  ErrorResponse  "noting was found"
+// @Failure      500  {object}  ErrorResponse  "Uknown error occured while deleting the book"
+// @Router /books/{id} [put]
 func (h *Handler) UpdateBook(ctx *gin.Context) {
 	ctxWithTimeout, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	defer cancel()
 
-	_ = ctxWithTimeout
+	bookID := ctx.Param("id")
+
+	var book dto.Book
+
+	if err := ctx.ShouldBindJSON(&book); err != nil {
+		h.logger.Error(ctx, "Invalid request body", zap.Error(err))
+		ctx.JSON(http.StatusBadRequest, ErrorResponse{Error: "Invalid request body"})
+		return
+	}
+
+	if err := h.service.UpdateBook(ctxWithTimeout, bookID, &book); err != nil {
+		if errors.Is(err, models.ErrFailedToParseID) {
+			ctx.JSON(http.StatusBadRequest, ErrorResponse{Error: err.Error()})
+			return
+		}
+
+		if errors.Is(err, models.ErrNotFound) {
+			ctx.JSON(http.StatusNotFound, ErrorResponse{Error: err.Error()})
+			return
+		}
+
+		h.logger.Error(ctx, "Unknown error occured while updating the book", zap.Error(err))
+		ctx.JSON(http.StatusInternalServerError, ErrorResponse{Error: "Uknown error occured while updating the book"})
+		return
+	}
+
+	ctx.Status(http.StatusOK)
 }
 
 // DeleteBook
@@ -119,6 +161,8 @@ func (h *Handler) UpdateBook(ctx *gin.Context) {
 // @Produce      json
 // @Param id path string true "Book ID"
 // @Success      200  {object}  nil
+// @Failure      400  {object}  ErrorResponse  "book id is invalid"
+// @Failure      404  {object}  ErrorResponse  "noting was found"
 // @Failure      500  {object}  ErrorResponse  "Uknown error occured while deleting the book"
 // @Router /books/{id} [delete]
 func (h *Handler) DeleteBook(ctx *gin.Context) {
@@ -154,6 +198,8 @@ func (h *Handler) DeleteBook(ctx *gin.Context) {
 // @Param page query string false "page number"
 // @Param limit query string false "limit"
 // @Success      200  {object}  dto.ListBooksResponse
+// @Failure      400  {object}  ErrorResponse  "page number is invalid / limit number is invalid"
+// @Failure      404  {object}  ErrorResponse  "noting was found"
 // @Failure      500  {object}  ErrorResponse  "Uknown error occured while listing the book"
 // @Router /books [get]
 func (h *Handler) ListBooks(ctx *gin.Context) {

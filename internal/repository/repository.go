@@ -126,3 +126,24 @@ func (r *Repository) ListBooks(ctx context.Context, limit, offset uint64) ([]*mo
 
 	return books, nil
 }
+
+func (r *Repository) UpdateBook(ctx context.Context, book *models.Book) error {
+	_, err := sq.Update("books").
+		Where(sq.Eq{"id": book.ID}).
+		Set("title", book.Title).
+		Set("author", book.Author).
+		Set("genre", book.Genre).
+		Set("updated_at", book.UpdatedAt).
+		PlaceholderFormat(sq.Dollar).
+		RunWith(r.db).
+		Exec()
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return models.ErrNotFound
+		}
+
+		return err
+	}
+
+	return nil
+}
