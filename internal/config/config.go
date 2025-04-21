@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"go-books-api/internal/models"
 	"time"
 
 	"github.com/ilyakaznacheev/cleanenv"
@@ -41,7 +42,7 @@ func New() (*Config, error) {
 	err = cleanenv.ReadConfig(".env", &cfg)
 
 	if cfg == (Config{}) {
-		// return nil, models.ErrEmptyConfig
+		return nil, models.ErrEmptyConfig
 	}
 
 	if err != nil {

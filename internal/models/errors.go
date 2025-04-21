@@ -7,4 +7,5 @@ var (
 	ErrFailedToParseLimit = errors.New("limit number is invalid")
 	ErrFailedToParseID    = errors.New("book id is invalid")
 	ErrNotFound           = errors.New("nothing was found")
+	ErrEmptyConfig        = errors.New("config is empty")
 )
