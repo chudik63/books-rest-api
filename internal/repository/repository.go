@@ -69,18 +69,23 @@ func (r *Repository) GetBookByID(ctx context.Context, id uint64) (*models.Book, 
 }
 
 func (r *Repository) DeleteBook(ctx context.Context, id uint64) error {
-	_, err := sq.Delete("books").
+	res, err := sq.Delete("books").
 		Where(sq.Eq{"id": id}).
 		PlaceholderFormat(sq.Dollar).
 		RunWith(r.db).
 		ExecContext(ctx)
 
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return models.ErrNotFound
-		}
-
 		return err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return models.ErrNotFound
 	}
 
 	return nil
