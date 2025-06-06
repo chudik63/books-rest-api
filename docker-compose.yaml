@@ -1,4 +1,18 @@
 services:
+  backend:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    env_file:
+      - .env
+    ports:
+      - '${HTTP_PORT}:${HTTP_PORT}'
+    networks:
+      - go_books_api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    
   postgres:
     image: "postgres:15"
     env_file:
