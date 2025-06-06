@@ -13,8 +13,8 @@ import (
 func RegistrateRoutes(app *gin.Engine, h *handler.Handler) {
 	books := app.Group("/books")
 
-	books.POST("/", h.AddBook)
-	books.GET("/", h.ListBooks)
+	books.POST("", h.AddBook)
+	books.GET("", h.ListBooks)
 	books.GET("/:id", h.GetBook)
 	books.DELETE("/:id", h.DeleteBook)
 	books.PUT("/:id", h.UpdateBook)
